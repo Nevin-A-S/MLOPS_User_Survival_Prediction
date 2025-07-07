@@ -1,0 +1,10 @@
+deployments:
+    - env: dev
+      executor: celery
+      image:
+        name: quay.io/astronomer/astro-runtime:7.3.0
+      name: user-survival-pred
+      volumes:
+        - ./include:/usr/local/airflow/include
+project:
+    name: user-survival-prediction
