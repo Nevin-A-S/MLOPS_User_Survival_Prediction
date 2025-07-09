@@ -1,1 +1,6 @@
-apache-airflow-providers-google
+# apache-airflow-providers-google
+pandas
+numpy
+setuptools
+psycopg2
+scikit-learn

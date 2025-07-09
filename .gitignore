@@ -11,3 +11,6 @@ airflow.cfg
 airflow.db
 venv
 gcp-key.json
+*.egg-info
+logs/
+artifacts/
