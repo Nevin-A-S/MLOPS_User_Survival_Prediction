@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Titanic Survival Predictor</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/style.css') }}"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='style.css') }}"
+    />
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <div class="logo">
+          <div class="logo-icon"></div>
+          <h1>Titanic Survival Predictor</h1>
+        </div>
+        <p class="subtitle">
+          AI-powered prediction system to determine passenger survival
+          probability
+        </p>
+      </div>
+
+      <div class="main-content">
+        <div class="form-container">
+          <div class="card">
+            <div class="card-header">
+              <h2>Passenger Information</h2>
+              <p>Enter the passenger details to predict survival probability</p>
+            </div>
+
+            <form method="POST" action="/predict" class="prediction-form">
+              <div class="form-grid">
+                <div class="form-group">
+                  <label for="Age">Age</label>
+                  <input
+                    type="number"
+                    step="0.1"
+                    name="Age"
+                    id="Age"
+                    required
+                  />
+                </div>
+
+                <div class="form-group">
+                  <label for="Fare">Fare (£)</label>
+                  <input
+                    type="number"
+                    step="0.01"
+                    name="Fare"
+                    id="Fare"
+                    required
+                  />
+                </div>
+
+                <div class="form-group">
+                  <label for="Sex">Sex</label>
+                  <select name="Sex" id="Sex" required>
+                    <option value="">Select gender</option>
+                    <option value="0">Female</option>
+                    <option value="1">Male</option>
+                  </select>
+                </div>
+
+                <div class="form-group">
+                  <label for="Pclass">Passenger Class</label>
+                  <select name="Pclass" id="Pclass" required>
+                    <option value="">Select class</option>
+                    <option value="1">First Class</option>
+                    <option value="2">Second Class</option>
+                    <option value="3">Third Class</option>
+                  </select>
+                </div>
+
+                <div class="form-group">
+                  <label for="Embarked">Port of Embarkation</label>
+                  <select name="Embarked" id="Embarked" required>
+                    <option value="">Select port</option>
+                    <option value="0">Cherbourg</option>
+                    <option value="1">Queenstown</option>
+                    <option value="2">Southampton</option>
+                  </select>
+                </div>
+
+                <div class="form-group">
+                  <label for="Familysize">Family Size</label>
+                  <input
+                    type="number"
+                    name="Familysize"
+                    id="Familysize"
+                    min="0"
+                    required
+                  />
+                </div>
+
+                <div class="form-group">
+                  <label for="Isalone">Traveling Alone</label>
+                  <select name="Isalone" id="Isalone" required>
+                    <option value="">Select option</option>
+                    <option value="0">No</option>
+                    <option value="1">Yes</option>
+                  </select>
+                </div>
+
+                <div class="form-group">
+                  <label for="HasCabin">Has Cabin</label>
+                  <select name="HasCabin" id="HasCabin" required>
+                    <option value="">Select option</option>
+                    <option value="0">No</option>
+                    <option value="1">Yes</option>
+                  </select>
+                </div>
+
+                <div class="form-group">
+                  <label for="Title">Title</label>
+                  <select name="Title" id="Title" required>
+                    <option value="">Select title</option>
+                    <option value="0">Mr</option>
+                    <option value="1">Mrs</option>
+                    <option value="2">Miss</option>
+                    <option value="3">Master</option>
+                    <option value="4">Other</option>
+                  </select>
+                </div>
+
+                <div class="form-group">
+                  <label for="Pclass_Fare">Class × Fare</label>
+                  <input
+                    type="number"
+                    step="0.01"
+                    name="Pclass_Fare"
+                    id="Pclass_Fare"
+                    required
+                  />
+                </div>
+
+                <div class="form-group">
+                  <label for="Age_Fare">Age × Fare</label>
+                  <input
+                    type="number"
+                    step="0.01"
+                    name="Age_Fare"
+                    id="Age_Fare"
+                    required
+                  />
+                </div>
+
+                <div class="form-group">
+                  <label for="entity_id">Entity ID</label>
+                  <input
+                    type="number"
+                    name="entity_id"
+                    id="entity_id"
+                    required
+                  />
+                </div>
+              </div>
+
+              <button type="submit" class="predict-btn">
+                <span class="btn-icon">🔮</span>
+                Predict Survival
+              </button>
+            </form>
+          </div>
+        </div>
+
+        {% if prediction_text %}
+        <div class="result-container">
+          <div
+            class="result-card {% if 'Survived' in prediction_text %}survived{% else %}not-survived{% endif %}"
+          >
+            <div class="result-icon">
+              {% if 'Survived' in prediction_text %} ✅ {% else %} ❌ {% endif
+              %}
+            </div>
+            <h3>Prediction Result</h3>
+            <p class="result-text">{{ prediction_text }}</p>
+            {% if 'Error' not in prediction_text %}
+            <div class="result-explanation">
+              <p>
+                This prediction is based on historical Titanic passenger data
+                using machine learning algorithms.
+              </p>
+            </div>
+            {% endif %}
+          </div>
+        </div>
+        {% endif %}
+      </div>
+
+      <footer>
+        <p>Powered by AI • Historical Data Analysis • Machine Learning</p>
+      </footer>
+    </div>
+
+    <script>
+      // Auto-calculate interaction features
+      function calculateInteractionFeatures() {
+        const pclass = document.getElementById("Pclass").value;
+        const fare = document.getElementById("Fare").value;
+        const age = document.getElementById("Age").value;
+
+        if (pclass && fare) {
+          document.getElementById("Pclass_Fare").value = (
+            parseFloat(pclass) * parseFloat(fare)
+          ).toFixed(2);
+        }
+
+        if (age && fare) {
+          document.getElementById("Age_Fare").value = (
+            parseFloat(age) * parseFloat(fare)
+          ).toFixed(2);
+        }
+      }
+
+      // Add event listeners
+      document
+        .getElementById("Pclass")
+        .addEventListener("change", calculateInteractionFeatures);
+      document
+        .getElementById("Fare")
+        .addEventListener("input", calculateInteractionFeatures);
+      document
+        .getElementById("Age")
+        .addEventListener("input", calculateInteractionFeatures);
+
+      // Form validation and enhancement
+      document
+        .querySelector(".prediction-form")
+        .addEventListener("submit", function (e) {
+          const btn = document.querySelector(".predict-btn");
+          btn.style.transform = "scale(0.95)";
+          btn.innerHTML = '<span class="btn-icon">⏳</span>Processing...';
+        });
+    </script>
+  </body>
+</html>
