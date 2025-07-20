@@ -52,16 +52,17 @@ class ModelTraining:
             test_data = self.load_data_from_redis(test_entity_ids)
 
             train_df = pd.DataFrame(train_data)
+        
             test_df = pd.DataFrame(test_data)
 
-            X_Train = train_df.drop(columns=['Survived'] ,axis=1)
+            X_Train = train_df.drop(columns=['Survived',"entity_id"] ,axis=1)
             logger.info(f"X_Train shape: {X_Train.shape}")
             logger.info(f"X_Train columns: {X_Train.columns.tolist()}")
 
             y_Train = train_df['Survived']
             logger.info(f"y_Train shape: {y_Train.shape}")
             
-            X_Test = test_df.drop(columns=['Survived'], axis=1)
+            X_Test = test_df.drop(columns=['Survived','entity_id'], axis=1)
             logger.info(f"X_Test shape: {X_Test.shape}")
             logger.info(f"X_Test columns: {X_Test.columns.tolist()}")
             
