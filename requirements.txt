@@ -8,3 +8,4 @@ imbalanced-learn
 redis
 flask
 alibi-detect
+prometheus_client
